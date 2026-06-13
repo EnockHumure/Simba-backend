@@ -27,12 +27,20 @@ app.get('/health', (req, res) => {
 
 app.post('/api/seed', async (req, res) => {
   try {
+    // First, push the schema to create tables
+    const { execSync } = await import('child_process');
+    console.log('Creating database tables...');
+    execSync('npx prisma db push --skip-generate', { stdio: 'inherit' });
+    
     const { readFileSync } = await import('fs');
     const { join } = await import('path');
+    
+    console.log('Loading products data...');
     const productsData = JSON.parse(
       readFileSync(join(process.cwd(), 'simba_products.json'), 'utf-8')
     );
 
+    console.log('Creating categories...');
     const departments = [...new Set(productsData.products.map((p: any) => p.department))];
     const categoryMap: Record<string, string> = {};
     
@@ -51,6 +59,7 @@ app.post('/api/seed', async (req, res) => {
       categoryMap[dept] = category.id;
     }
 
+    console.log('Importing products...');
     let created = 0;
     for (const product of productsData.products) {
       try {
@@ -74,11 +83,15 @@ app.post('/api/seed', async (req, res) => {
           }
         });
         created++;
+        if (created % 100 === 0) {
+          console.log(`Imported ${created} products...`);
+        }
       } catch (error) {
         // Skip duplicates
       }
     }
 
+    console.log('Creating sample user...');
     await prisma.user.upsert({
       where: { email: 'john@example.com' },
       update: {},
@@ -90,8 +103,12 @@ app.post('/api/seed', async (req, res) => {
       }
     });
 
-    res.json({ success: true, message: `Seeded ${created} products, ${departments.length} categories, and 1 user` });
+    res.json({ 
+      success: true, 
+      message: `✅ Database seeded! ${created} products, ${departments.length} categories, 1 user` 
+    });
   } catch (error: any) {
+    console.error('Seed error:', error);
     res.status(500).json({ error: error.message });
   }
 });
