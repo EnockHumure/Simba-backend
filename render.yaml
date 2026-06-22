@@ -1,7 +1,13 @@
-{
-  "build": {
-    "env": {
-      "NODE_VERSION": "18"
-    }
-  }
-}
+services:
+  - type: web
+    name: simba-backend
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
