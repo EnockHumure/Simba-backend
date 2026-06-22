@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://simba-frontend-world.vercel.app',
     'https://simba-frontend-sigma.vercel.app'
   ],
   credentials: true
