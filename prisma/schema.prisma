@@ -100,6 +100,7 @@ model Order {
   userId            String
   user              User        @relation(fields: [userId], references: [id])
   branchId          String?
+  branch            Branch?     @relation(fields: [branchId], references: [id])
   status            String      @default("pending")
   paymentStatus     String      @default("pending")
   subtotal          Float
@@ -120,7 +121,27 @@ model Order {
   items             OrderItem[]
 
   @@index([userId])
+  @@index([branchId])
   @@index([orderNumber])
+}
+
+model Branch {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  address     String
+  district    String?
+  sector      String?
+  phone       String?
+  latitude    Float?
+  longitude   Float?
+  image       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([slug])
 }
 
 model OrderItem {
