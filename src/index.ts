@@ -16,11 +16,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'https://simba-frontend-world.vercel.app',
-    'https://simba-frontend-sigma.vercel.app'
-  ],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and all Vercel deployments
+    if (
+      origin.includes('localhost') ||
+      origin.includes('vercel.app') ||
+      origin === (process.env.FRONTEND_URL || 'http://localhost:3000')
+    ) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json());
