@@ -40,9 +40,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/branches', branchRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/auth', authRoutes);
+
+// Temporary stub for branches until table is created
+app.get('/api/branches', (req, res) => res.json({ data: [] }));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
