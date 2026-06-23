@@ -6,6 +6,7 @@ const router = Router();
 router.get('/', productController.getProducts);
 router.get('/featured', productController.getFeaturedProducts);
 router.get('/top', productController.getTopProducts);
+router.get('/recommendations', productController.getRecommendations);
 router.get('/:id', productController.getProduct);
 router.post('/', productController.createProduct);
 router.put('/:id', productController.updateProduct);

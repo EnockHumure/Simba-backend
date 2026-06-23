@@ -135,3 +135,21 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to delete product' });
   }
 };
+
+export const getRecommendations = async (req: Request, res: Response) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: { active: true },
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+      take: 8
+    });
+    const transformedProducts = products.map(p => ({
+      ...p,
+      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+    }));
+    res.json(transformedProducts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recommendations' });
+  }
+};
