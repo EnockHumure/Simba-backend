@@ -23,8 +23,14 @@ export const getProducts = async (req: Request, res: Response) => {
       prisma.product.count({ where })
     ]);
 
+    // Transform images string to array
+    const transformedProducts = products.map(p => ({
+      ...p,
+      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+    }));
+
     res.json({
-      data: products,
+      data: transformedProducts,
       pagination: {
         page: Number(page),
         limit: Number(limit),
@@ -66,7 +72,11 @@ export const getFeaturedProducts = async (req: Request, res: Response) => {
       take: 10,
       orderBy: { createdAt: 'desc' }
     });
-    res.json(products);
+    const transformedProducts = products.map(p => ({
+      ...p,
+      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+    }));
+    res.json(transformedProducts);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch featured products' });
   }
@@ -80,7 +90,11 @@ export const getTopProducts = async (req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
       take: 10
     });
-    res.json(products);
+    const transformedProducts = products.map(p => ({
+      ...p,
+      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+    }));
+    res.json(transformedProducts);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch top products' });
   }
