@@ -26,7 +26,9 @@ export const getProducts = async (req: Request, res: Response) => {
     // Transform images string to array
     const transformedProducts = products.map(p => ({
       ...p,
-      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+      images: Array.isArray(p.images) 
+        ? p.images 
+        : (p.images ? p.images.split(',').map(img => img.trim()) : [])
     }));
 
     res.json({
@@ -74,7 +76,9 @@ export const getFeaturedProducts = async (req: Request, res: Response) => {
     });
     const transformedProducts = products.map(p => ({
       ...p,
-      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+      images: Array.isArray(p.images) 
+        ? p.images 
+        : (p.images ? p.images.split(',').map(img => img.trim()) : [])
     }));
     res.json(transformedProducts);
   } catch (error) {
@@ -92,7 +96,9 @@ export const getTopProducts = async (req: Request, res: Response) => {
     });
     const transformedProducts = products.map(p => ({
       ...p,
-      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+      images: Array.isArray(p.images) 
+        ? p.images 
+        : (p.images ? p.images.split(',').map(img => img.trim()) : [])
     }));
     res.json(transformedProducts);
   } catch (error) {
@@ -146,7 +152,9 @@ export const getRecommendations = async (req: Request, res: Response) => {
     });
     const transformedProducts = products.map(p => ({
       ...p,
-      images: p.images ? p.images.split(',').map(img => img.trim()) : []
+      images: Array.isArray(p.images) 
+        ? p.images 
+        : (p.images ? p.images.split(',').map(img => img.trim()) : [])
     }));
     res.json(transformedProducts);
   } catch (error) {
