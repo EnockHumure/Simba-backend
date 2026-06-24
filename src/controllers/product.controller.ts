@@ -48,8 +48,13 @@ export const getProducts = async (req: Request, res: Response) => {
 export const getProduct = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const product = await prisma.product.findUnique({
-      where: { id },
+    const product = await prisma.product.findFirst({
+      where: {
+        OR: [
+          { id },
+          { slug: id }
+        ]
+      },
       include: {
         category: true,
         reviews: {
@@ -60,7 +65,16 @@ export const getProduct = async (req: Request, res: Response) => {
     });
 
     if (!product) return res.status(404).json({ error: 'Product not found' });
-    res.json(product);
+
+    // Transform images string to array
+    const transformedProduct = {
+      ...product,
+      images: Array.isArray(product.images) 
+        ? product.images 
+        : (product.images ? product.images.split(',').map(img => img.trim()) : [])
+    };
+
+    res.json(transformedProduct);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch product' });
   }
